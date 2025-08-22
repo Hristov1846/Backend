@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { createStory, reactStory } = require("../controllers/storyController");
-const auth = require("../middleware/auth");
+const { createStory, getStories } = require("../controllers/storyController");
+const authMiddleware = require("../middleware/authMiddleware");
 
-router.post("/create", auth, createStory);
-router.post("/:id/react", auth, reactStory);
+router.post("/", authMiddleware, createStory);
+router.get("/", authMiddleware, getStories);
 
 module.exports = router;
