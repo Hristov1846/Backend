@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { getBalance, deposit } = require("../controllers/walletController");
-const auth = require("../middleware/auth");
+const { getWallet, deposit } = require("../controllers/walletController");
+const authMiddleware = require("../middleware/authMiddleware");
 
-router.get("/balance", auth, getBalance);
-router.post("/deposit", auth, deposit);
+router.get("/", authMiddleware, getWallet);
+router.post("/deposit", authMiddleware, deposit);
 
 module.exports = router;
