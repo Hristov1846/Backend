@@ -1,18 +1,22 @@
-const User = require("../models/User");
+const Post = require("../models/Post");
 
-exports.getUserProfile = async (req, res) => {
+exports.createPost = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select("-password");
-    res.json(user);
+    const newPost = await Post.create({ ...req.body, user: req.user.id });
+    res.status(201).json(newPost);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-exports.updateProfile = async (req, res) => {
+exports.likePost = async (req, res) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(req.user.id, req.body, { new: true });
-    res.json(updatedUser);
+    const post = await Post.findById(req.params.id);
+    if (!post.likes.includes(req.user.id)) {
+      post.likes.push(req.user.id);
+    }
+    await post.save();
+    res.json(post);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
