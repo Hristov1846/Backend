@@ -1,21 +1,9 @@
-const Wallet = require("../models/Wallet");
+const Notification = require("../models/Notification");
 
-exports.getWallet = async (req, res) => {
+exports.getNotifications = async (req, res) => {
   try {
-    const wallet = await Wallet.findOne({ user: req.user.id });
-    res.json(wallet);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-exports.deposit = async (req, res) => {
-  try {
-    const wallet = await Wallet.findOne({ user: req.user.id });
-    wallet.balance += req.body.amount;
-    wallet.transactions.push({ type: "deposit", amount: req.body.amount });
-    await wallet.save();
-    res.json(wallet);
+    const notifications = await Notification.find({ user: req.user.id }).sort({ createdAt: -1 });
+    res.json(notifications);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
