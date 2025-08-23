@@ -1,20 +1,15 @@
 import express from "express";
-import protect from "../middleware/authMiddleware.js";
-import {
-  getStats,
-  getAllUsers,
-  deleteUser,
-  endLiveByAdmin,
-  getAllProducts,
-} from "../controllers/adminController.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// всички рутове са защитени
-router.get("/stats", protect, getStats);
-router.get("/users", protect, getAllUsers);
-router.delete("/users/:id", protect, deleteUser);
-router.post("/live/end/:id", protect, endLiveByAdmin);
-router.get("/products", protect, getAllProducts);
+// Само за админи (пример)
+router.get("/dashboard", authMiddleware, (req, res) => {
+  if (req.user && req.user.role === "admin") {
+    res.json({ message: "Welcome, Admin!" });
+  } else {
+    res.status(403).json({ error: "Access denied" });
+  }
+});
 
 export default router;
