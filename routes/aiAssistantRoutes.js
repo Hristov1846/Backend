@@ -1,10 +1,9 @@
 import express from "express";
-import { askAI } from "../controllers/aiAssistantController.js";
-import authMiddleware from "../middleware/authMiddleware.js";
+import protect from "../middleware/authMiddleware.js";
+import { chatWithAI } from "../controllers/aiController.js";
 
 const router = express.Router();
 
-// Задай въпрос на AI
-router.post("/ask", authMiddleware, askAI);
+router.post("/chat", protect, chatWithAI);
 
 export default router;
