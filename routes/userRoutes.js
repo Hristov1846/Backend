@@ -1,9 +1,13 @@
 const express = require("express");
-const router = express.Router();
-const { getUserProfile, updateProfile } = require("../controllers/userController");
+const { getUser, updateUser } = require("../controllers/userController");
 const authMiddleware = require("../middleware/authMiddleware");
 
-router.get("/:id", authMiddleware, getUserProfile);
-router.put("/update", authMiddleware, updateProfile);
+const router = express.Router();
+
+// Вземане на информация за потребител
+router.get("/:id", authMiddleware, getUser);
+
+// Обновяване на потребител
+router.put("/:id", authMiddleware, updateUser);
 
 module.exports = router;
