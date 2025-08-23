@@ -1,9 +1,13 @@
 const express = require("express");
-const router = express.Router();
-const { createItem, getItems } = require("../controllers/marketplaceController");
+const { addItem, getItems } = require("../controllers/marketplaceController");
 const authMiddleware = require("../middleware/authMiddleware");
 
-router.post("/", authMiddleware, createItem);
+const router = express.Router();
+
+// Добавяне на артикул
+router.post("/add", authMiddleware, addItem);
+
+// Вземане на всички артикули
 router.get("/", getItems);
 
 module.exports = router;
