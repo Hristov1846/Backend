@@ -1,9 +1,17 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const transactionSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  amount: { type: Number, required: true },
-  type: { type: String, enum: ["deposit", "withdraw", "gift"], required: true }
-}, { timestamps: true });
+const transactionSchema = new mongoose.Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    type: {
+      type: String,
+      enum: ["deposit", "withdraw", "transfer", "gift"],
+      required: true,
+    },
+    amount: { type: Number, required: true },
+    targetUser: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // за transfer/gift
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model("Transaction", transactionSchema);
+export default mongoose.model("Transaction", transactionSchema);
