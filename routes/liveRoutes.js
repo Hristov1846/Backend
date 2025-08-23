@@ -1,13 +1,19 @@
-const express = require("express");
-const { startLive, joinLive } = require("../controllers/liveController");
-const authMiddleware = require("../middleware/authMiddleware");
+import express from "express";
+import protect from "../middleware/authMiddleware.js";
+import {
+  startLive,
+  endLive,
+  joinLive,
+  sendGiftLive,
+  addModerator,
+} from "../controllers/liveController.js";
 
 const router = express.Router();
 
-// Стартиране на live
-router.post("/start", authMiddleware, startLive);
+router.post("/start", protect, startLive);
+router.post("/end/:id", protect, endLive);
+router.post("/join/:id", protect, joinLive);
+router.post("/gift/:id", protect, sendGiftLive);
+router.post("/moderator/:id", protect, addModerator);
 
-// Присъединяване към live
-router.post("/join/:id", authMiddleware, joinLive);
-
-module.exports = router;
+export default router;
