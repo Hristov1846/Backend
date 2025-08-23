@@ -1,20 +1,37 @@
-import axios from "axios";
+import OpenAI from "openai";
 
-export const askAI = async (req, res) => {
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// @desc Chat with AI Assistant
+// @route POST /api/ai/chat
+export const chatWithAI = async (req, res) => {
   try {
-    const { question } = req.body;
+    const { role, message } = req.body;
 
-    if (!question) {
-      return res.status(400).json({ message: "Моля, задай въпрос." });
+    let systemPrompt = "You are a helpful assistant.";
+    if (role === "psychologist") {
+      systemPrompt = "You are a supportive psychologist helping with emotions and mental health.";
+    } else if (role === "fitness") {
+      systemPrompt = "You are a professional fitness coach providing workout advice.";
+    } else if (role === "diet") {
+      systemPrompt = "You are a nutrition expert giving diet and health recommendations.";
     }
 
-    // Тук може да извикаш външен AI API (примерно OpenAI или друг)
-    // Засега ще върнем примерен отговор:
-    const fakeResponse = `AI отговор на твоя въпрос: "${question}"`;
+    const response = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: message },
+      ],
+    });
 
-    return res.json({ answer: fakeResponse });
+    res.json({
+      reply: response.choices[0].message.content,
+    });
   } catch (error) {
-    console.error("AI Assistant грешка:", error.message);
-    res.status(500).json({ message: "Грешка при обработка на AI заявката." });
+    console.error("AI Error:", error.message);
+    res.status(500).json({ message: "AI Assistant error", error: error.message });
   }
 };
