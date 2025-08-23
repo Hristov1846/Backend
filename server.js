@@ -1,58 +1,55 @@
 import express from "express";
-import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
-import bodyParser from "body-parser";
+import dotenv from "dotenv";
+import { createServer } from "http";
+import { Server } from "socket.io";
 
-// Роутове
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
-import storyRoutes from "./routes/storyRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
-import notificationRoutes from "./routes/notificationRoutes.js";
-import marketplaceRoutes from "./routes/marketplaceRoutes.js";
 import walletRoutes from "./routes/walletRoutes.js";
-import liveRoutes from "./routes/liveRoutes.js";
-import moderatorRoutes from "./routes/moderatorRoutes.js";
-import aiAssistantRoutes from "./routes/aiAssistantRoutes.js"; // 🆕 AI Assistant
+import marketplaceRoutes from "./routes/marketplaceRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
 
 dotenv.config();
-
 const app = express();
+const httpServer = createServer(app);
+
+const io = new Server(httpServer, {
+  cors: { origin: "*" }
+});
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
-// MongoDB връзка
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
-
-// Основни маршрути
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
-app.use("/api/stories", storyRoutes);
 app.use("/api/chat", chatRoutes);
-app.use("/api/notifications", notificationRoutes);
-app.use("/api/marketplace", marketplaceRoutes);
 app.use("/api/wallet", walletRoutes);
-app.use("/api/live", liveRoutes);
-app.use("/api/moderators", moderatorRoutes);
-app.use("/api/ai-assistant", aiAssistantRoutes); // 🆕 AI Assistant route
+app.use("/api/marketplace", marketplaceRoutes);
+app.use("/api/ai", aiRoutes);
 
-// Default route
-app.get("/", (req, res) => {
-  res.send("🚀 Backend server is running with AI Assistant included!");
+// MongoDB
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch(err => console.error("❌ MongoDB Error:", err));
+
+// Socket.IO
+io.on("connection", (socket) => {
+  console.log("🔌 New client connected:", socket.id);
+  socket.on("sendMessage", (data) => {
+    io.emit("receiveMessage", data);
+  });
+  socket.on("disconnect", () => {
+    console.log("❌ Client disconnected:", socket.id);
+  });
 });
 
+// Server listen
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
-});
+httpServer.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
