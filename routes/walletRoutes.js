@@ -1,13 +1,19 @@
-const express = require("express");
-const { addFunds, getBalance } = require("../controllers/walletController");
-const authMiddleware = require("../middleware/authMiddleware");
+import express from "express";
+import protect from "../middleware/authMiddleware.js";
+import {
+  getBalance,
+  depositCoins,
+  withdrawCoins,
+  transferCoins,
+  sendGift,
+} from "../controllers/walletController.js";
 
 const router = express.Router();
 
-// Добавяне на средства
-router.post("/add", authMiddleware, addFunds);
+router.get("/balance", protect, getBalance);
+router.post("/deposit", protect, depositCoins);
+router.post("/withdraw", protect, withdrawCoins);
+router.post("/transfer", protect, transferCoins);
+router.post("/gift", protect, sendGift);
 
-// Баланс
-router.get("/balance", authMiddleware, getBalance);
-
-module.exports = router;
+export default router;
