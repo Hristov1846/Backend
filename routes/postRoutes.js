@@ -1,19 +1,13 @@
 import express from "express";
-import protect from "../middleware/authMiddleware.js";
-import {
-  createPost,
-  getPosts,
-  likePost,
-  reactToPost,
-  addComment,
-} from "../controllers/postController.js";
+import { createPost, getPosts } from "../controllers/postController.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", protect, createPost);
-router.get("/", protect, getPosts);
-router.post("/:id/like", protect, likePost);
-router.post("/:id/react", protect, reactToPost);
-router.post("/:id/comment", protect, addComment);
+// Създаване на пост
+router.post("/", authMiddleware, createPost);
+
+// Взимане на всички постове
+router.get("/", getPosts);
 
 export default router;
