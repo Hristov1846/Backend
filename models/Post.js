@@ -1,28 +1,31 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const postSchema = new mongoose.Schema(
+const commentSchema = new mongoose.Schema(
   {
-    author: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    text: { type: String, default: "" },
-    media: { type: String, default: "" },
-
-    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    reactions: [
-      {
-        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        type: { type: String, enum: ["like", "love", "haha", "wow", "sad", "angry"] },
-      },
-    ],
-
-    comments: [
-      {
-        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        text: { type: String, required: true },
-        createdAt: { type: Date, default: Date.now },
-      },
-    ],
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    text: { type: String, required: true },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Post", postSchema);
+const postSchema = new mongoose.Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    text: { type: String, required: true },
+    media: { type: String }, // снимка или видео URL
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    reactions: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        type: {
+          type: String,
+          enum: ["like", "love", "haha", "wow", "sad", "angry"],
+        },
+      },
+    ],
+    comments: [commentSchema],
+  },
+  { timestamps: true }
+);
+
+export default mongoose.model("Post", postSchema);
