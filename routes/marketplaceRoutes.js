@@ -1,13 +1,17 @@
-const express = require("express");
-const { addItem, getItems } = require("../controllers/marketplaceController");
-const authMiddleware = require("../middleware/authMiddleware");
+import express from "express";
+import protect from "../middleware/authMiddleware.js";
+import {
+  createProduct,
+  getProducts,
+  getProductById,
+  buyProduct,
+} from "../controllers/marketplaceController.js";
 
 const router = express.Router();
 
-// Добавяне на артикул
-router.post("/add", authMiddleware, addItem);
+router.post("/", protect, createProduct);
+router.get("/", protect, getProducts);
+router.get("/:id", protect, getProductById);
+router.post("/buy/:id", protect, buyProduct);
 
-// Вземане на всички артикули
-router.get("/", getItems);
-
-module.exports = router;
+export default router;
