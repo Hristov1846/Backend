@@ -8,6 +8,6 @@ const router = express.Router();
 router.post("/", authMiddleware, createChat);
 
 // Изпращане на съобщение
-router.post("/message", authMiddleware, sendMessage);
+router.post("/:chatId/message", authMiddleware, sendMessage);
 
 module.exports = router;
