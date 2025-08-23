@@ -1,9 +1,13 @@
 const express = require("express");
-const router = express.Router();
-const { startLive, sendGift } = require("../controllers/liveStreamController");
+const { createStream, endStream } = require("../controllers/liveStreamController");
 const authMiddleware = require("../middleware/authMiddleware");
 
-router.post("/start", authMiddleware, startLive);
-router.post("/:id/gift", authMiddleware, sendGift);
+const router = express.Router();
+
+// Стартиране на стрийм
+router.post("/create", authMiddleware, createStream);
+
+// Приключване на стрийм
+router.post("/end/:id", authMiddleware, endStream);
 
 module.exports = router;
