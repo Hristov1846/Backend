@@ -1,13 +1,25 @@
-const express = require("express");
-const { getUser, updateUser } = require("../controllers/userController");
-const authMiddleware = require("../middleware/authMiddleware");
+import express from "express";
+import protect from "../middleware/authMiddleware.js";
+import {
+  getUserProfile,
+  updateUserProfile,
+  followUser,
+  unfollowUser,
+  addFriend,
+  pokeUser,
+  likeProfile,
+} from "../controllers/userController.js";
 
 const router = express.Router();
 
-// Вземане на информация за потребител
-router.get("/:id", authMiddleware, getUser);
+router.get("/:id", protect, getUserProfile);
+router.put("/:id", protect, updateUserProfile);
 
-// Обновяване на потребител
-router.put("/:id", authMiddleware, updateUser);
+router.post("/follow/:id", protect, followUser);
+router.post("/unfollow/:id", protect, unfollowUser);
 
-module.exports = router;
+router.post("/add-friend/:id", protect, addFriend);
+router.post("/poke/:id", protect, pokeUser);
+router.post("/like/:id", protect, likeProfile);
+
+export default router;
