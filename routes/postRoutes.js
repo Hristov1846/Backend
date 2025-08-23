@@ -1,9 +1,13 @@
 const express = require("express");
-const router = express.Router();
-const { createPost, likePost } = require("../controllers/postController");
+const { createPost, getPosts } = require("../controllers/postController");
 const authMiddleware = require("../middleware/authMiddleware");
 
+const router = express.Router();
+
+// Създаване на пост
 router.post("/", authMiddleware, createPost);
-router.put("/:id/like", authMiddleware, likePost);
+
+// Вземане на постове
+router.get("/", getPosts);
 
 module.exports = router;
