@@ -1,13 +1,10 @@
-const express = require("express");
-const { createChat, sendMessage } = require("../controllers/chatController");
-const authMiddleware = require("../middleware/authMiddleware");
+import express from "express";
+import protect from "../middleware/authMiddleware.js";
+import { sendMessage, getConversation } from "../controllers/chatController.js";
 
 const router = express.Router();
 
-// Създаване на чат
-router.post("/", authMiddleware, createChat);
+router.post("/", protect, sendMessage);
+router.get("/:receiverId", protect, getConversation);
 
-// Изпращане на съобщение
-router.post("/:chatId/message", authMiddleware, sendMessage);
-
-module.exports = router;
+export default router;
