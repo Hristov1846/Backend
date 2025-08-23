@@ -1,9 +1,13 @@
 const express = require("express");
-const router = express.Router();
 const { createStory, getStories } = require("../controllers/storyController");
 const authMiddleware = require("../middleware/authMiddleware");
 
+const router = express.Router();
+
+// Създаване на сторѝ
 router.post("/", authMiddleware, createStory);
-router.get("/", authMiddleware, getStories);
+
+// Вземане на всички сторѝ
+router.get("/", getStories);
 
 module.exports = router;
